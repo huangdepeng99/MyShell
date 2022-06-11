@@ -336,7 +336,7 @@ cmd_is_empty (char * cmdline)
 {
 	char *p = cmdline;
 	char c;
-	while(c = *p){
+	while((c = *p)){
 		if(isblank(c))
 			p = p + 1;
 		else
@@ -362,7 +362,7 @@ delete_extra_blank (char * cmdline)
 	int cmd_pos_start = 0;
 	int cmd_pos_end = 0;
 	int new_cmd_pos = 0;
-	while(c = cmdline[cmd_pos_start]){
+	while((c = cmdline[cmd_pos_start])){
 		if(!isblank(c)){
 			cmd_pos_end = cmd_pos_start + 1;
 			char tmp_c;
@@ -848,6 +848,26 @@ expand (char * cmdline)
 
 
 /* Builtin Command */
+/* If you want to add a built-in command, you need to provide its handler function, 
+ * which has the following function prototype:
+ *   int bc_do_<name> (int argc, char ** argv)
+ * The handler should return -1 on error and 1 on success.
+ * You also need to append _(<name>) to the macro FORALL_BC(_), and you also need to modify 
+ * the macro HELP_MESSAGE to make the built-in help work correctly.
+ */
+typedef int (*bchandler_t)(int, char **);
+
+typedef struct bc_entry
+{
+	char * name;
+	bchandler_t handler;
+} bc_entry;
+
+#define FORALL_BC(_)  _(exit) _(help) _(history) _(set) _(unset) _(pwd) _(cd) _(jobs) _(fg) _(bg)
+#define ADD_BC_ENTRY(NAME) {#NAME, bc_do_##NAME},
+
+
+
 int
 bc_do_exit (int argc, char ** argv)
 {
@@ -1184,6 +1204,14 @@ free_job (job * j)
 }
 
 
+
+bc_entry bc_list[] = {
+	FORALL_BC(ADD_BC_ENTRY)
+	{NULL, NULL}
+};
+
+
+
 /* Builtin command: 
  *   exit - Exit the shell.
  *   help [<name>] - 1. help : Display information about builtin commands.
@@ -1223,27 +1251,16 @@ builtin_cmd (job * j)
 		argc++;
 
 	int rv;
-	if(strcmp((p -> argv)[0], "exit") == 0){
-		rv = bc_do_exit(argc, p -> argv);
-	}else if(strcmp((p -> argv)[0], "help") == 0){
-		rv = bc_do_help(argc, p -> argv);
-	}else if(strcmp((p -> argv)[0], "history") == 0){
-		rv = bc_do_history(argc, p -> argv);
-	}else if(strcmp((p -> argv)[0], "set") == 0){
-		rv = bc_do_set(argc, p -> argv);
-	}else if(strcmp((p -> argv)[0], "unset") == 0){
-		rv = bc_do_unset(argc, p -> argv);
-	}else if(strcmp((p -> argv)[0], "pwd") == 0){
-		rv = bc_do_pwd(argc, p -> argv);
-	}else if(strcmp((p -> argv)[0], "cd") == 0){
-		rv = bc_do_cd(argc, p -> argv);
-	}else if (strcmp((p -> argv)[0], "jobs") == 0){
-		rv = bc_do_jobs(argc, p -> argv);
-	}else if(strcmp((p -> argv)[0], "fg") == 0){
-		rv = bc_do_fg(argc, p -> argv);
-	}else if(strcmp((p -> argv)[0], "bg") == 0){
-		rv = bc_do_bg(argc, p -> argv);
-	}else
+	bc_entry *ep = bc_list;
+	while(ep -> name != NULL){
+		if(strcmp((p -> argv)[0], ep -> name) == 0){
+			rv = (ep -> handler)(argc, p -> argv);
+			break;
+		}
+		++ep;
+	}
+
+	if(ep -> name == NULL)
 		return 0;	/* not a builtin command */
 
 	/* free job */
