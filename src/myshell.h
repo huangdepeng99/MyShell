@@ -1,7 +1,7 @@
 /* 
  * myshell.h
  */
-/* begin myshell.h */
+/* $begin myshell.h */
 #ifndef __MYSHELL_H__
 #define __MYSHELL_H__
 
@@ -17,7 +17,10 @@
 #define DEF_UMASK	S_IWGRP | S_IWOTH
 
 
-/* Job Control */
+/*************
+ * Job Control
+ ************/
+/* $begin job control */
 /* I/O Redirection */
 typedef struct io_redirect
 {
@@ -70,20 +73,33 @@ extern int job_is_completed (job * j);
 extern void launch_job (job *j, int foreground);
 extern void update_status (void);
 extern void do_job_notification (void);
+/* $end job control */
 
 
-/* Get Command */
+/*************
+ * Get Command
+ ************/
+/* $begin get command */
 extern char * next_cmd (char * prompt, FILE * fp);
 extern int cmd_is_empty (char * cmdline);
+/* $end get command */
 
 
-/* Evaluate Command */
+/******************
+ * Evaluate Command
+ *****************/
+/* $begin evaluate command */
 extern int eval_cmd (char * cmdline);
+/* $end evaluate command */
 
 
-/* Builtin Command */
+/*****************
+ * Builtin Command
+ ****************/
+/* $begin builtin command */
 extern int builtin_cmd (job * j);
+/* $end builtin command */
 
 
 #endif /* __MYSHELL_H__ */
-/* end myshell.h */
+/* $end myshell.h */

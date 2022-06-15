@@ -9,7 +9,7 @@
  *   You also need to append _(<name>) to the macro FORALL_BC(_), and you also need to modify 
  *   the macro HELP_MESSAGE to make the built-in help work correctly.
  */
-/* begin builtin_cmd.c */
+/* $begin builtin_cmd.c */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,28 +28,41 @@ typedef struct bc_entry
 	bchandler_t handler;
 } bc_entry;
 
-#define FORALL_BC(_)        _(exit) _(help) _(history) _(set) _(unset) _(pwd) _(cd) _(jobs) _(fg) _(bg)
-#define ADD_BC_ENTRY(NAME)  {#NAME, bc_do_##NAME},
+#define FORALL_BC(_) _(exit) \
+					 _(help) \
+					 _(history) \
+					 _(set) \
+					 _(unset) \
+					 _(pwd) \
+					 _(cd) \
+					 _(jobs) \
+					 _(fg) \
+					 _(bg)
 
-#define HELP_MESSAGE  "Builtin command: \n" \
-	                  "  exit - Exit the shell.\n" \
-	                  "  help - Display information about builtin commands.\n" \
-	                  "  history - Display the history list.\n" \
-	                  "  set [<name>] [<value>] - 1. set : Check the names and values of all shell variables.\n" \
-	                  "                           2. set <name> : Check the value of the variable named <name>.\n" \
-	                  "                           3. set <name> <value> : Create a new variable with the name <name> and the \n" \
-	                  "                              value <value>, or update the value of the variable named <name> to <value>.\n" \
-	                  "  unset <name> - Delete the shell variable named <name>.\n" \
-	                  "  pwd - Print the absolute pathname of the current working directory.\n" \
-	                  "  cd <dir> - Change the current working directory to <dir>.\n" \
-	                  "  jobs - Display status of jobs.\n" \
-	                  "  fg <job_id> - Move job to the foreground.\n" \
-	                  "  bg <job_id> - Move job to the background.\n" \
-	                  "\n" \
-	                  "Note: Builtin commands does not support pipelines and I/O redirection.\n"
+#define ADD_BC_ENTRY(NAME) {#NAME, bc_do_##NAME},
+
+#define HELP_MESSAGE "Builtin command: \n" \
+	                 "  exit - Exit the shell.\n" \
+	                 "  help - Display information about builtin commands.\n" \
+	                 "  history - Display the history list.\n" \
+	                 "  set [<name>] [<value>] - 1. set : Check the names and values of all shell variables.\n" \
+	                 "                           2. set <name> : Check the value of the variable named <name>.\n" \
+	                 "                           3. set <name> <value> : Create a new variable with the name <name> and the \n" \
+	                 "                              value <value>, or update the value of the variable named <name> to <value>.\n" \
+	                 "  unset <name> - Delete the shell variable named <name>.\n" \
+	                 "  pwd - Print the absolute pathname of the current working directory.\n" \
+	                 "  cd <dir> - Change the current working directory to <dir>.\n" \
+	                 "  jobs - Display status of jobs.\n" \
+	                 "  fg <job_id> - Move job to the foreground.\n" \
+	                 "  bg <job_id> - Move job to the background.\n" \
+	                 "\n" \
+	                 "Note: Builtin commands does not support pipelines and I/O redirection.\n"
 
 
-/* begin handler */
+/********************************
+ * Handlers for built-in commands
+ *******************************/
+/* $begin handler */
 
 static
 int
@@ -313,7 +326,7 @@ bc_do_bg (int argc, char ** argv)
 	return 1;
 }
 
-/* end handler */
+/* $end handler */
 
 
 static
@@ -343,7 +356,7 @@ builtin_cmd (job * j)
 	while((p -> argv)[argc] != NULL)
 		argc++;
 
-	int rv;
+	int rv = 0;
 	bc_entry *ep = bc_list;
 	while(ep -> name != NULL){
 		if(strcmp((p -> argv)[0], ep -> name) == 0){
@@ -373,4 +386,4 @@ builtin_cmd (job * j)
 }
 
 
-/* end builtin_cmd.c */
+/* $end builtin_cmd.c */

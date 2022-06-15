@@ -1,7 +1,7 @@
 /* 
  * main.c
  */
-/* begin main.c */
+/* $begin main.c */
 #include <stdio.h>
 #include <stdlib.h>
 #include "myshell.h"
@@ -33,4 +33,4 @@ main (int argc, char * argv[])
 }
 
 
-/* end main.c */
+/* $end main.c */

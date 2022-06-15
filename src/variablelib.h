@@ -1,7 +1,7 @@
 /* 
  * variablelib.h
  */
-/* begin variablelib.h */
+/* $begin variablelib.h */
 #ifndef __VARIABLELIB_H__
 #define __VARIABLELIB_H__
 
@@ -22,4 +22,4 @@ extern void add_variable (char * name, char * value);
 
 
 #endif /* __VARIABLELIB_H__ */
-/* end variablelib.h */
+/* $end variablelib.h */

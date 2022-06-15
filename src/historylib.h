@@ -1,7 +1,7 @@
 /* 
  * historylib.h
  */
-/* begin historylib.h */
+/* $begin historylib.h */
 #ifndef __HISTORYLIB_H__
 #define __HISTORYLIB_H__
 
@@ -12,4 +12,4 @@ extern void print_hist_list (void);
 
 
 #endif /* __HISTORYLIB_H__ */
-/* end historylib.h */
+/* $end historylib.h */

@@ -1,7 +1,7 @@
 /* 
  * eval_cmd.c
  */
-/* begin eval_cmd.c */
+/* $begin eval_cmd.c */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -81,7 +81,7 @@ history_expand (char * cmdline)
                     new_cmdline = erealloc(new_cmdline, bufspace + inc_bufspace);
                     bufspace += inc_bufspace;
                 }
-                strncpy(&new_cmdline[new_cmd_pos], rv, substr_len);
+                strcpy(&new_cmdline[new_cmd_pos], rv);
                 new_cmd_pos += substr_len;
                 cmd_pos_start = cmd_pos_end;
                 flag = 1;
@@ -244,7 +244,7 @@ variable_expand (char * cmdline)
                         new_cmdline = erealloc(new_cmdline, bufspace + inc_bufspace);
                         bufspace += inc_bufspace;
                     }
-                    strncpy(&new_cmdline[new_cmd_pos], rv, substr_len);
+                    strcpy(&new_cmdline[new_cmd_pos], rv);
                     new_cmd_pos += substr_len;
                 }
                 cmd_pos_start = cmd_pos_end;
@@ -270,7 +270,7 @@ variable_expand (char * cmdline)
                         new_cmdline = erealloc(new_cmdline, bufspace + inc_bufspace);
                         bufspace += inc_bufspace;
                     }
-                    strncpy(&new_cmdline[new_cmd_pos], rv, substr_len);
+                    strcpy(&new_cmdline[new_cmd_pos], rv);
                     new_cmd_pos += substr_len;
                 }
                 cmd_pos_start = cmd_pos_end;
@@ -505,4 +505,4 @@ eval_cmd (char * cmdline)
 }
 
 
-/* end eval_cmd.c */
+/* $end eval_cmd.c */

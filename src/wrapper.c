@@ -1,7 +1,7 @@
 /* 
  * wrapper.c
  */
-/* begin wrapper.c */
+/* $begin wrapper.c */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -33,4 +33,4 @@ erealloc (void * p, size_t n)
 	return rv;
 }
 
-/* end wrapper.c */
+/* $end wrapper.c */

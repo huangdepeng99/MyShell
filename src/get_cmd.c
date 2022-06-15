@@ -1,7 +1,7 @@
 /* 
  * get_cmd.c
  */
-/* begin get_cmd.c */
+/* $begin get_cmd.c */
 #include <stdio.h>
 #include <ctype.h>
 #include "myshell.h"
@@ -11,7 +11,7 @@
 char *
 next_cmd (char * prompt, FILE * fp)
 {
-	char *buf;
+	char *buf = NULL;
 	int bufspace = 0;
 	int pos = 0;
 	int c;
@@ -55,4 +55,4 @@ cmd_is_empty (char * cmdline)
 }
 
 
-/* end get_cmd.c */
+/* $end get_cmd.c */

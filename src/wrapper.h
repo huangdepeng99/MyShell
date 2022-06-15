@@ -1,7 +1,7 @@
 /* 
  * wrapper.h
  */
-/* begin wrapper.h */
+/* $begin wrapper.h */
 #ifndef __WRAPPER_H__
 #define __WRAPPER_H__
 
@@ -13,4 +13,4 @@ extern void * erealloc (void * p, size_t n);
 
 
 #endif /* __WRAPPER_H__ */
-/* end wrapper.h */
+/* $end wrapper.h */

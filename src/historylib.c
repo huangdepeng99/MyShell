@@ -1,7 +1,7 @@
 /* 
  * historylib.c
  */
-/* begin historylib.c */
+/* $begin historylib.c */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -66,4 +66,4 @@ print_hist_list (void)
 }
 
 
-/* end historylib.c */
+/* $end historylib.c */

@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 OBJS = main.o get_cmd.o eval_cmd.o builtin_cmd.o job_control.o historylib.o variablelib.o wrapper.o
-CFLAGS = -Wall
+CFLAGS = -Wall -Werror -std=c11 -O2
 CC = gcc
 LD = gcc
 

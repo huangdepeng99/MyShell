@@ -1,7 +1,9 @@
 /* 
  * job_control.c
  */
-/* begin job_control.c */
+/* $begin job_control.c */
+#define _POSIX_C_SOURCE 1	/* for kill(), see the man pages KILL(2) and FEATURE_TEST_MACROS(7) */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -116,7 +118,7 @@ wait_for_job (job * j)
 	pid_t pid;
 
 	do{
-		pid = waitpid(WAIT_ANY, &status, WUNTRACED);	/* WAIT_ANY == -1 */
+		pid = waitpid(-1, &status, WUNTRACED);
 	}while(!mark_process_status(pid, status)
 		   && !job_is_stopped(j)
 		   && !job_is_completed(j));
@@ -439,7 +441,7 @@ update_status (void)
 	pid_t pid;
 
 	do{
-		pid = waitpid(WAIT_ANY, &status, WUNTRACED | WNOHANG);	/* WAIT_ANY == -1 */
+		pid = waitpid(-1, &status, WUNTRACED | WNOHANG);
 	}while(!mark_process_status(pid, status));
 }
 
@@ -484,4 +486,4 @@ do_job_notification (void)
 }
 
 
-/* end builtin_cmd.c */
+/* $end builtin_cmd.c */

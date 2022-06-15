@@ -3,7 +3,7 @@
  * 
  * Note: Only local variables are supported, not environment variables.
  */
-/* begin variablelib.c */
+/* $begin variablelib.c */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -101,4 +101,4 @@ add_variable (char * name, char * value)
 }
 
 
-/* end variablelib.c */
+/* $end variablelib.c */
