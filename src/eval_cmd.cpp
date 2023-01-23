@@ -1,7 +1,13 @@
 /* 
- * eval_cmd.c
+ * eval_cmd.cpp
  */
-/* $begin eval_cmd.c */
+/* $begin eval_cmd.cpp */
+#include <iostream>
+#include <string>
+#include <cctype>
+#include <stdexcept>
+#include "myshell.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,106 +16,70 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-#include "myshell.h"
-#include "historylib.h"
-#include "variablelib.h"
-#include "wrapper.h"
 
-
-static
-char *
-delete_extra_blank (char * cmdline)
-{
-    char *new_cmdline = emalloc(strlen(cmdline) + 1);
-
-    char c;
-    int cmd_pos_start = 0;
-    int cmd_pos_end = 0;
-    int new_cmd_pos = 0;
-    while((c = cmdline[cmd_pos_start])){
-        if(!isblank(c)){
+static std::string delete_extra_blank(const std::string & cmdline) {
+	using std::size_t;
+	
+	std::string new_cmdline;
+	size_t sz = cmdline.size();
+	
+	size_t cmd_pos_start = 0;
+	size_t cmd_pos_end = 0;
+	while (cmd_pos_start < sz) {
+		if (!std::isspace(cmdline[cmd_pos_start])) {
             cmd_pos_end = cmd_pos_start + 1;
-            char tmp_c;
-            while((tmp_c = cmdline[cmd_pos_end]) != '\0' && !isblank(tmp_c))
-                cmd_pos_end++;
-            int substr_len = cmd_pos_end - cmd_pos_start;
-            strncpy(&new_cmdline[new_cmd_pos], &cmdline[cmd_pos_start], substr_len);
-            new_cmd_pos += substr_len;
-            new_cmdline[new_cmd_pos++] = ' ';
+            while(cmd_pos_end < sz && !std::isspace(cmdline[cmd_pos_end]))
+                ++ cmd_pos_end;
+            size_t substr_len = cmd_pos_end - cmd_pos_start;
+            new_cmdline += cmdline.substr(cmd_pos_start, substr_len) + ' ';
             cmd_pos_start = cmd_pos_end;
-        }else
-            cmd_pos_start++;
-    }
-    new_cmdline[new_cmd_pos-1] = '\0';
-
-    free(cmdline);
+		} else
+			++ cmd_pos_start;
+	}
+	
     return new_cmdline;
 }
 
-
-static
-char *
-history_expand (char * cmdline)
-{
-    char *new_cmdline;
-    size_t len = strlen(cmdline) + 1;
-    size_t bufspace = ((len + BUF_SIZE - 1) / BUF_SIZE) * BUF_SIZE;
-    new_cmdline = emalloc(bufspace);
-
-    char c;
-    int cmd_pos_start = 0;
-    int cmd_pos_end = 0;
-    int new_cmd_pos = 0;
-    int flag = 0;
+static int history_expand(const std::string & cmdline, std::string & new_cmdline) {
+	using std::size_t;
+	
+	std::string t_cmd;
+    size_t sz = cmdline.size();
+	
+    size_t cmd_pos_start = 0;
+    size_t cmd_pos_end = 0;
+    bool flag = false;
     /* Start history expand. */
-    /* If failed: 1.print error message; 2.free cmdline and new_cmdline; 3.return -1. */
-    while((c = cmdline[cmd_pos_start])){
-        if(c == '!' && isdigit(cmdline[cmd_pos_start+1])){
-            cmd_pos_end = cmd_pos_start + 1;
-            while(isdigit(cmdline[cmd_pos_end]))
-                cmd_pos_end++;
-            int hist_index = atoi(&cmdline[cmd_pos_start+1]);
-            char *rv;
-            if((rv = get_hist(hist_index)) == (char *) -1){ /* failed */
-                fprintf(stderr, "Error: history expand failed\n");
-                free(cmdline); free(new_cmdline);
-                return (char *) -1;
-            }else{
-                size_t substr_len = strlen(rv);
-                if(new_cmd_pos + substr_len + 1 >= bufspace){
-                    size_t inc_bufspace = ((substr_len + BUF_SIZE - 1) / BUF_SIZE) * BUF_SIZE;
-                    new_cmdline = erealloc(new_cmdline, bufspace + inc_bufspace);
-                    bufspace += inc_bufspace;
-                }
-                strcpy(&new_cmdline[new_cmd_pos], rv);
-                new_cmd_pos += substr_len;
-                cmd_pos_start = cmd_pos_end;
-                flag = 1;
-            }
-        }else{
-            if(new_cmd_pos + 1 >= bufspace) {
-                new_cmdline = erealloc(new_cmdline, bufspace + BUF_SIZE);
-                bufspace += BUF_SIZE;
-            }
-            new_cmdline[new_cmd_pos++] = c;
-            cmd_pos_start++;
+    while (cmd_pos_start < sz) {
+        if(cmdline[cmd_pos_start] == '!' && cmd_pos_start + 1 < sz &&
+			std::isdigit(cmdline[cmd_pos_start + 1]))
+		{
+            int hist_index = std::stoi(cmdline.substr(cmd_pos_start + 1), &cmd_pos_end);
+			std::string rv;
+			try {
+				rv = hs.get(hist_index - 1);
+			catch (const std::out_of_range & oor) {		/* failed */
+				std::cerr << "History expand failed: " << oor.what() << std::endl;
+                return -1;
+			}
+			t_cmd += rv;
+			cmd_pos_start = cmd_pos_end;
+			flag = true;
+        } else {
+            t_cmd += c;
+            ++ cmd_pos_start;
         }
     }
-    new_cmdline[new_cmd_pos] = '\0';
+	new_cmdline = t_cmd;
     /* End history expand. */
     
     /* If success. */
     if(flag)
-        printf("%s\n", new_cmdline);
-    free(cmdline);
-    return new_cmdline;
+        std::cout << new_cmdline << std::endl;
+    return 0;
 }
 
-
-static
-void
-add_job (char * command)
-{
+static void add_job (char * command) {
     job *new_job = emalloc(sizeof(job));
 
     new_job -> next = NULL;
@@ -133,7 +103,6 @@ add_job (char * command)
     }
     current_job = new_job;
 }
-
 
 static
 char *
@@ -476,15 +445,17 @@ add_process (char * cmdline)
  *   3.tilde expand; 4.variable expand; 5.add process entry.
  */
 int
-eval_cmd (char * cmdline)
+eval_cmd (const std::string & cmdline)
 {
-    char *temp_cmdline;
-
+	std::string temp_cmdline;
+	
     temp_cmdline = delete_extra_blank(cmdline);
-
-    if((temp_cmdline = history_expand(temp_cmdline)) == (char *) -1)
+	
+	std::string t_cmd;
+    if(history_expand(temp_cmdline, t_cmd) == -1)
         return -1;
-
+	temp_cmdline = t_cmd;
+	
     size_t tmp_cmdln_len = strlen(temp_cmdline) + 1;
 
     add_hist(temp_cmdline);
@@ -505,4 +476,4 @@ eval_cmd (char * cmdline)
 }
 
 
-/* $end eval_cmd.c */
+/* $end eval_cmd.cpp */

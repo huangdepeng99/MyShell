@@ -1,0 +1,15 @@
+SHELL = /bin/bash
+OBJS = main.o get_cmd.o eval_cmd.o builtin_cmd.o job_control.o history.o variable.o
+CXXFLAGS = -Wall -Werror -std=c++11 -O2
+CXX = g++
+LD = g++
+
+myshell : $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+%.o : %.c
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $^
+
+.PHONY: clean
+clean:
+	rm -f myshell *.o

@@ -1,5 +1,5 @@
 /* 
- * builtin_cmd.c
+ * builtin_cmd.cpp
  * 
  * Note: 
  *   If you want to add a built-in command, you need to provide its handler function, 
@@ -9,7 +9,7 @@
  *   You also need to append _(<name>) to the macro FORALL_BC(_), and you also need to modify 
  *   the macro HELP_MESSAGE to make the built-in help work correctly.
  */
-/* $begin builtin_cmd.c */
+/* $begin builtin_cmd.cpp */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -386,4 +386,4 @@ builtin_cmd (job * j)
 }
 
 
-/* $end builtin_cmd.c */
+/* $end builtin_cmd.cpp */

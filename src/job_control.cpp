@@ -1,8 +1,12 @@
 /* 
- * job_control.c
+ * job_control.cpp
  */
-/* $begin job_control.c */
+/* $begin job_control.cpp */
 #define _POSIX_C_SOURCE 1	/* for kill(), see the man pages KILL(2) and FEATURE_TEST_MACROS(7) */
+
+#include <iostream>
+#include <cstdlib>
+#include <new>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +19,6 @@
 #include <termios.h>
 #include <errno.h>
 #include "myshell.h"
-
 
 /* The active jobs are linked into a list. This is its head. */
 job *first_job = NULL;
@@ -215,6 +218,13 @@ free_job (job * j)
 }
 
 
+static
+void no_memory() {
+	std::cerr << std::endl << "Failed to allocate memory!" << std::endl;
+	std::exit(EXIT_FAILURE);
+}
+
+
 /* Make sure the shell is running as the foreground job
  * before proceeding.
  */
@@ -251,6 +261,8 @@ init_shell (void)
 
     /* Save default terminal attributes for shell. */
     tcgetattr(shell_terminal, &shell_tmodes);
+	
+	std::set_new_handler(no_memory);
 }
 
 
@@ -486,4 +498,4 @@ do_job_notification (void)
 }
 
 
-/* $end builtin_cmd.c */
+/* $end builtin_cmd.cpp */
