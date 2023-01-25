@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include "history.h"
 
+history hs;
+
 history::~history() {
 	while (head != nullptr) {
 		node * temp = head;

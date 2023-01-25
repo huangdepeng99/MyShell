@@ -3,6 +3,7 @@
  */
 /* $begin eval_cmd.cpp */
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <cctype>
 #include <stdexcept>
@@ -18,26 +19,14 @@
 #include <pwd.h>
 
 static std::string delete_extra_blank(const std::string & cmdline) {
-	using std::size_t;
+	std::istringstream iss(cmdline);
+	std::string new_cmdline, word;
 	
-	std::string new_cmdline;
-	size_t sz = cmdline.size();
-	
-	size_t cmd_pos_start = 0;
-	size_t cmd_pos_end = 0;
-	while (cmd_pos_start < sz) {
-		if (!std::isspace(cmdline[cmd_pos_start])) {
-            cmd_pos_end = cmd_pos_start + 1;
-            while(cmd_pos_end < sz && !std::isspace(cmdline[cmd_pos_end]))
-                ++ cmd_pos_end;
-            size_t substr_len = cmd_pos_end - cmd_pos_start;
-            new_cmdline += cmdline.substr(cmd_pos_start, substr_len) + ' ';
-            cmd_pos_start = cmd_pos_end;
-		} else
-			++ cmd_pos_start;
+	while (iss >> word) {
+		new_cmdline += word + ' ';
 	}
 	
-    return new_cmdline;
+	return new_cmdline;
 }
 
 static int history_expand(const std::string & cmdline, std::string & new_cmdline) {

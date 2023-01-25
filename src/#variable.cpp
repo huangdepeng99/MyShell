@@ -7,6 +7,8 @@
 #include <iostream>
 #include "variable.h"
 
+variable var;
+
 variable::~variable() {
 	while (head != nullptr) {
 		node * temp = head;

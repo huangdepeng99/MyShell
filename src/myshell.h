@@ -17,10 +17,10 @@
 #define DEF_UMASK	S_IWGRP | S_IWOTH
 
 #include "history.h"
-history hs;
+extern history hs;
 
 #include "variable.h"
-variable var;
+extern variable var;
 
 /*************
  * Job Control
