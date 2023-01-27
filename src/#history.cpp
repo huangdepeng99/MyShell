@@ -17,7 +17,7 @@ history::~history() {
 	}
 }
 
-std::string history::get(int idx) const {
+const std::string & history::get(int idx) const {
 	if (idx < 0 || idx >= size) {
 		std::ostringstream oss;
 		oss << "bad index " << idx;

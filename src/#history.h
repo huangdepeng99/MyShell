@@ -31,10 +31,12 @@ public:
 	int size() const { return size; }
 	int max_size() const { return maxsize; }
 	bool isfull() const { return size == maxsize }
-	std::string get(int idx) const;
+	const std::string & get(int idx) const;
 	void add(const std::string & s);
 	void show() const;
 };
+
+extern history hs;
 
 #endif /* HISTORY_H_ */
 /* $end history.h */

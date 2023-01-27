@@ -17,10 +17,7 @@
 #define DEF_UMASK	S_IWGRP | S_IWOTH
 
 #include "history.h"
-extern history hs;
-
 #include "variable.h"
-extern variable var;
 
 /*************
  * Job Control
@@ -90,7 +87,7 @@ extern bool cmd_is_empty(const std::string & cmdline);
  * Evaluate Command
  *****************/
 /* $begin evaluate command */
-extern int eval_cmd (char * cmdline);
+extern bool eval_cmd(const std::string & cmdline);
 /* $end evaluate command */
 
 

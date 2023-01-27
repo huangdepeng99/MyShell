@@ -19,7 +19,7 @@ int main (int argc, char * argv[]) {
 	
 	cout << prompt;
 	while (std::getline(cin, cmdline).good()) {
-		if(!cmd_is_empty(cmdline) && eval_cmd(cmdline) != -1 &&
+		if(!cmd_is_empty(cmdline) && eval_cmd(cmdline) &&
 			builtin_cmd(current_job) == 0)
 		{
 			launch_job(current_job, foreground);

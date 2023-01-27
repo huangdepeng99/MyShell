@@ -33,5 +33,7 @@ public:
 	void show() const;
 };
 
+extern variable var;
+
 #endif /* VARIABLE_H_ */
 /* $end variable.h */

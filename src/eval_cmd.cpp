@@ -29,43 +29,38 @@ static std::string delete_extra_blank(const std::string & cmdline) {
 	return new_cmdline;
 }
 
-static int history_expand(const std::string & cmdline, std::string & new_cmdline) {
-	using std::size_t;
-	
-	std::string t_cmd;
-    size_t sz = cmdline.size();
-	
-    size_t cmd_pos_start = 0;
-    size_t cmd_pos_end = 0;
+static bool history_expand(const std::string & cmdline, std::string & new_cmdline) {
+	std::istringstream iss(cmdline);
+	std::string temp_cmdline, line;
     bool flag = false;
+	
     /* Start history expand. */
-    while (cmd_pos_start < sz) {
-        if(cmdline[cmd_pos_start] == '!' && cmd_pos_start + 1 < sz &&
-			std::isdigit(cmdline[cmd_pos_start + 1]))
-		{
-            int hist_index = std::stoi(cmdline.substr(cmd_pos_start + 1), &cmd_pos_end);
-			std::string rv;
+	while (std::getline(iss, line, '!').good()) {
+		temp_cmdline += line;
+		line.clear();
+		int hist_index;
+		if (iss >> hist_index) {
 			try {
-				rv = hs.get(hist_index - 1);
-			catch (const std::out_of_range & oor) {		/* failed */
-				std::cerr << "History expand failed: " << oor.what() << std::endl;
-                return -1;
+				temp_cmdline += hs.get(hist_index - 1);
 			}
-			t_cmd += rv;
-			cmd_pos_start = cmd_pos_end;
+			catch (const std::out_of_range & oor) {		/* Failed */
+				std::cerr << "History expand failed: " << oor.what() << std::endl;
+                return false;
+			}
 			flag = true;
-        } else {
-            t_cmd += c;
-            ++ cmd_pos_start;
-        }
-    }
-	new_cmdline = t_cmd;
+		} else {
+			temp_cmdline += '!';
+			iss.clear();
+		}
+	}
+	temp_cmdline += line;
+	new_cmdline = temp_cmdline;
     /* End history expand. */
     
     /* If success. */
     if(flag)
         std::cout << new_cmdline << std::endl;
-    return 0;
+    return true;
 }
 
 static void add_job (char * command) {
@@ -433,16 +428,14 @@ add_process (char * cmdline)
  *   1.history expand; 2.add history entry, add job entry;
  *   3.tilde expand; 4.variable expand; 5.add process entry.
  */
-int
-eval_cmd (const std::string & cmdline)
-{
+bool eval_cmd (const std::string & cmdline) {
 	std::string temp_cmdline;
 	
     temp_cmdline = delete_extra_blank(cmdline);
 	
 	std::string t_cmd;
-    if(history_expand(temp_cmdline, t_cmd) == -1)
-        return -1;
+    if(!history_expand(temp_cmdline, t_cmd))
+        return false;
 	temp_cmdline = t_cmd;
 	
     size_t tmp_cmdln_len = strlen(temp_cmdline) + 1;
@@ -461,7 +454,7 @@ eval_cmd (const std::string & cmdline)
 
     add_process(temp_cmdline);
 
-    return 0;
+    return true;
 }
 
 
